@@ -6,7 +6,7 @@
   },
   "autoload": {
     "psr-4": {
-      "fanren\\sms\\": "src/"
+      "yaplus\\sms\\": "src/"
     }
   }
 }
