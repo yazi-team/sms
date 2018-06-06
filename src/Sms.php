@@ -1,5 +1,5 @@
 <?php
-namespace fanren\sms;
+namespace yaplus\sms;
 class Sms {
     private $sms = null;
     /**
