@@ -1,0 +1,12 @@
+{
+  "name": "fanren/sms",
+  "keywords": ["thinkphp","alidayu"],
+  "require": {
+    "php": ">=5.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "fanren\\sms\\": "src/"
+    }
+  }
+}
