@@ -1,5 +1,5 @@
 {
-  "name": "fanren/sms",
+  "name": "yaplus/sms",
   "keywords": ["thinkphp","alidayu"],
   "require": {
     "php": ">=5.4"
