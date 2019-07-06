@@ -11,7 +11,11 @@ class Sms {
     public function __construct($config, $type = 'Dysmsapi') {
         if (file_exists(__DIR__ . "/lib/{$type}.php")) {
             include(__DIR__ . "/lib/{$type}.php");
-            $this->sms = new $type($config);
+            if (class_exists($type)) {
+                $this->sms = new $type($config);
+            }else{
+                throw new \Exception('Creating sms Object fail');
+            }
         }else{
             throw new \Exception('no sms type');
         }
