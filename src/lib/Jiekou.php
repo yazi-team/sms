@@ -53,7 +53,7 @@ class Jiekou {
         if ($message == 100) {
             return true;
         } else {
-            $$this->error = $this->get_message($message);
+            $this->error = $this->get_message($message);
             return false;
         }
     }
