@@ -7,6 +7,7 @@ class Jiekou {
     private $config = [];
     public $error = '';
     const API_URL = "http://sms.106jiekou.com/utf8/sms.aspx";
+    const GJ_API_URL = "http://sms.106jiekou.com/utf8/worldapi.aspx";
 
     /**
      * 接口网短信接口
@@ -17,6 +18,44 @@ class Jiekou {
      */
     public function __construct(array $config) {
         $this->config = $config;
+    }
+    
+    /**
+     * 发送国际短信
+     * @param string $mobile 
+     * @param array $code
+     * @return boolean
+     */
+    public function sendGjSms($mobile, $code) {
+        if (empty($mobile)) {
+            $this->error = "参数有误：手机号码不能为空";
+            return false;
+        }
+        if (trim($code) == "") {
+            $this->error = "参数有误：短信验证码不能为空";
+            return false;
+        }
+        if (empty($this->config['account']) || empty($this->config['password'])) {
+            $this->error = "参数有误：配置信息有误";
+            return false;
+        }
+        if (is_array($mobile)) {
+            $this->error = "接口网不支持批量发送短信";
+            return false;
+        }
+        $post_data = "account={$this->config['account']}&password={$this->config['password']}&mobile={$mobile}&content=".rawurlencode("您的验证码是：{$code}。如需帮助请联系客服。");
+        try {
+            $message = $this->post($post_data, self::GJ_API_URL);
+        } catch (\Exception $ex) {
+            $this->error = $ex->getMessage();
+            return false;
+        }
+        if ($message == 100) {
+            return true;
+        } else {
+            $this->error = $this->get_message($message);
+            return false;
+        }
     }
     
     /**
@@ -43,7 +82,6 @@ class Jiekou {
             return false;
         }
         $post_data = "account={$this->config['account']}&password={$this->config['password']}&mobile={$mobile}&content=".rawurlencode("您的验证码是：{$code}。如需帮助请联系客服。");
-        
         try {
             $message = $this->post($post_data, self::API_URL);
         } catch (\Exception $ex) {

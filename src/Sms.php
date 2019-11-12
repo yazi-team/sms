@@ -31,6 +31,16 @@ class Sms {
         return $this->sms->sendSms($mobile, $params);
     }
     
+    /**
+     * 发送国际短信
+     * @param string|array $mobile
+     * @param array $params
+     * @return boolean
+     */
+    public function sendGjSms($mobile, $params = []) {
+        return $this->sms->sendGjSms($mobile, $params);
+    }
+    
     public function getError() {
         return $this->sms->error;
     }
