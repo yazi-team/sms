@@ -43,7 +43,7 @@ class Smsbao {
             $this->error = "接口网不支持批量发送短信";
             return false;
         }
-        $post_data = "u={$this->config['account']}&p=". md5($this->config['password']) ."&m={$mobile}&c=".rawurlencode("您的验证码是：{$code}。如需帮助请联系客服。");
+        $post_data = "u={$this->config['account']}&p=". md5($this->config['password']) ."&m={$mobile}&c=".rawurlencode("【爱乐淘】您的验证码是：{$code}。如需帮助请联系客服。");
         try {
             $message = $this->post($post_data, self::GJ_API_URL);
         } catch (\Exception $ex) {
