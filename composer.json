@@ -3,7 +3,8 @@
   "keywords": ["thinkphp","alidayu"],
   "require": {
     "php": ">=5.4",
-    "twilio/sdk": "^5.24"
+    "twilio/sdk": "^5.24",
+    "alibabacloud/client": "^1.5"
   },
   "autoload": {
     "psr-4": {
