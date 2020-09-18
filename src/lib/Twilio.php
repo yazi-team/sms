@@ -22,15 +22,15 @@ class Twilio {
     /**
      * 发送普通短信
      * @param string $mobile 
-     * @param array $sms_body
+     * @param array $code
      * @return boolean
      */
-    public function sendSms($mobile, $sms_body) {
+    public function sendSms($mobile, $code) {
         if (empty($mobile)) {
             $this->error = "参数有误：手机号码不能为空";
             return false;
         }
-        if (trim($sms_body) == "") {
+        if (trim($code) == "") {
             $this->error = "参数有误：短信内容不能为空";
             return false;
         }
@@ -48,7 +48,7 @@ class Twilio {
         //本地测试时设置 CURLOPT_SSL_VERIFYHOST为0，CURLOPT_SSL_VERIFYPEER为false
         $curlOptions = [CURLOPT_SSL_VERIFYHOST => 2, CURLOPT_SSL_VERIFYPEER => true];
         $sms_api->setHttpClient(new CurlClient($curlOptions));
-        
+        $sms_body = "您的验证码：{$code}";
         try {
             //开始发送短信
             $message = $sms_api->messages->create($mobile, ['from' => $this->config['from_phone'], 'body' => $sms_body]);
@@ -62,5 +62,9 @@ class Twilio {
             $$this->error = '短信发送失败';
             return false;
         }
+    }
+    
+    public function sendGjSms($mobile, $code) {
+        return $this->sendSms($mobile, $code);
     }
 }

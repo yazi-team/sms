@@ -1,13 +1,12 @@
 <?php
 
-/**
- * 短信宝
- */
-class Smsbao {
+class Ipyy {
+
     private $config = [];
     public $error = '';
-    const API_URL = "https://api.smsbao.com/sms";
-    const GJ_API_URL = "https://api.smsbao.com/wsms";
+
+    const API_URL = "https://dx.ipyy.net/sms.aspx";
+    const GJ_API_URL = "https://dx.ipyy.net/I18NSms.aspx";
 
     /**
      * 接口网短信接口
@@ -19,7 +18,7 @@ class Smsbao {
     public function __construct(array $config) {
         $this->config = $config;
     }
-    
+
     /**
      * 发送国际短信
      * @param string $mobile 
@@ -40,31 +39,34 @@ class Smsbao {
             return false;
         }
         if (is_array($mobile)) {
-            $this->error = "接口网不支持批量发送短信";
-            return false;
+            $mobile = implode(",", $mobile);
         }
-        $content = "【{$this->config['sign']}】Your Verification Code is:{$code}"; //短信内容注意签名
+        $str = "【{$this->config['sign']}】Your Verification Code is:{$code}"; //短信内容注意签名
+        $content = strtoupper(bin2hex(iconv('utf-8', 'UCS-2BE', $str)));
         $params = [
-            'u' => $this->config['account'],
-            'p' => md5($this->config['password']),
-            'm' => $mobile,
-            'c' => rawurlencode($content),
+            'action' => 'send',
+            'userid' => '',
+            'account' => $this->config['account'],
+            'password' => $this->config['password'],
+            'mobile' => $mobile,
+            'code' => "8",
+            'content' => $content,
         ];
         $post_data = http_build_query($params);
         try {
-            $message = $this->post($post_data, self::GJ_API_URL);
+            $result = $this->post($post_data, self::GJ_API_URL);
         } catch (\Exception $ex) {
             $this->error = $ex->getMessage();
             return false;
         }
-        if ($message === '0') {
-            return true;
-        } else {
-            $this->error = $this->get_message($message);
+        if ($result['returnstatus'] == 'Faild') {
+            $this->error = $result['message'];
             return false;
+        } else {
+            return true;
         }
     }
-    
+
     /**
      * 发送普通短信
      * @param string $mobile 
@@ -85,31 +87,32 @@ class Smsbao {
             return false;
         }
         if (is_array($mobile)) {
-            $this->error = "接口网不支持批量发送短信";
-            return false;
+            $mobile = implode(",", $mobile);
         }
-        $content = "【{$this->config['sign']}】您的验证码是:{$code}"; //短信内容注意签名
+        $content = "【{$this->config['sign']}】您的验证码：{$code}。"; //短信内容注意签名
         $params = [
-            'u' => $this->config['account'],
-            'p' => md5($this->config['password']),
-            'm' => $mobile,
-            'c' => rawurlencode($content),
+            'action' => 'send',
+            'userid' => '',
+            'account' => $this->config['account'],
+            'password' => $this->config['password'],
+            'mobile' => $mobile,
+            'content' => $content,
         ];
         $post_data = http_build_query($params);
         try {
-            $message = $this->post($post_data, self::API_URL);
+            $result = $this->post($post_data, self::API_URL);
         } catch (\Exception $ex) {
             $this->error = $ex->getMessage();
             return false;
         }
-        if ($message === '0') {
-            return true;
-        } else {
-            $this->error = $this->get_message($message);
+        if ($result['returnstatus'] == 'Faild') {
+            $this->error = $result['message'];
             return false;
+        } else {
+            return true;
         }
     }
-    
+
     private function post($curlPost, $url) {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -120,23 +123,18 @@ class Smsbao {
         curl_setopt($curl, CURLOPT_POSTFIELDS, $curlPost);
         $return_str = curl_exec($curl);
         curl_close($curl);
-        return $return_str;
+        return $this->simplexml_obj2array($return_str);
     }
 
-    
-    private function get_message( $code ) {
-        $msg = [
-            "0" => "短信发送成功",
-            "-1" => "参数不全",
-            "-2" => "服务器空间不支持,请确认支持curl或者fsocket，联系您的空间商解决或者更换空间！",
-            "30" => "密码错误",
-            "40" => "账号不存在",
-            "41" => "余额不足",
-            "42" => "帐户已过期",
-            "43" => "IP地址限制",
-            "50" => "内容含有敏感词"
-        ];
-        
-        return isset($msg[$code]) ? $msg[$code] : "短信发送失败";
+    // XML转换成数组
+    private function simplexml_obj2array($obj) {
+        if (is_object($obj)) {
+            $result = array();
+            foreach ((array) $obj as $key => $item) {
+                $result[$key] = $this->simplexml_obj2array($item);
+            }
+            return $result;
+        }
+        return $obj;
     }
 }
