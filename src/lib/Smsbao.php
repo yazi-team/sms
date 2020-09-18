@@ -48,7 +48,7 @@ class Smsbao {
             'u' => $this->config['account'],
             'p' => md5($this->config['password']),
             'm' => $mobile,
-            'c' => rawurlencode($content),
+            'c' => $content,
         ];
         $post_data = http_build_query($params);
         try {
