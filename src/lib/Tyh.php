@@ -39,7 +39,7 @@ class Tyh {
         $params = [
             'account' => $this->config['account'],
             'datetime' => date("YmdHis"),
-            'numbers' => $mobile,
+            'numbers' => str_replace("+", "", $mobile),
             'content' => $content,
         ];
         $params['sign'] = md5($params['account'] . $this->config['password'] . $params['datetime']);
