@@ -35,7 +35,7 @@ class Tyh {
         if (is_array($mobile)) {
             $mobile = implode(",", $mobile);
         }
-        $content = "【{$this->config['sign']}】Your Verification Code is:{$code}"; //短信内容注意签名
+        $content = "Cam on Quy Khach ma cua ban la {$code}. Xin vui long khong chia se cho bat ki ai."; //短信内容注意签名
         $params = [
             'account' => $this->config['account'],
             'datetime' => date("YmdHis"),
