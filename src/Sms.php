@@ -1,7 +1,7 @@
 <?php
 namespace yaplus\sms;
 class Sms {
-    private $sms = null;
+    protected $sms = null;
     /**
      * 短信接口
      * @param array $config
